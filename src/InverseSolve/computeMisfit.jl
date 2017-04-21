@@ -33,7 +33,7 @@ function computeMisfit(sig,     # conductivity on inv mesh (active cells only)
 
 	if doDerivative
 		tic()
-		dF = dsigma'*interpLocalToGlobal(getSensTMatVec(dF,sigmaloc,pMis.pFor),pMis.gloc.PForInv)
+		dF = interpLocalToGlobal(dsigma,getSensTMatVec(dF,sigmaloc,pMis.pFor),pMis.gloc.PForInv)
 		times[4]=toq()
 	end
 

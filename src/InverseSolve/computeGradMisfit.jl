@@ -12,7 +12,7 @@ function computeGradMisfit(sig,Dc::Array,pMis::MisfitParam)
 		sigma,dsigma = pMis.modelfun(sig)
 		sigmaloc = interpGlobalToLocal(sigma,pMis.gloc.PForInv,pMis.gloc.sigmaBackground)
 		F,dF,d2F = pMis.misfit(Dc,pMis.dobs,pMis.Wd)
-		return dsigma'*interpLocalToGlobal(getSensTMatVec(dF,sigmaloc,pMis.pFor),pMis.gloc.PForInv)
+		return interpLocalToGlobal(dsigma,getSensTMatVec(dF,sigmaloc,pMis.pFor),pMis.gloc.PForInv)
 	catch err
 		if isa(err,InterruptException)
 			return -1

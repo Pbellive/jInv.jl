@@ -42,11 +42,11 @@ function HessMatVec(x,
 		sigma,dsigma = pMis.modelfun(sig)
 
 		sigmaloc = interpGlobalToLocal(sigma,pMis.gloc.PForInv,pMis.gloc.sigmaBackground)
-		xloc     = interpGlobalToLocal(dsigma*x,pMis.gloc.PForInv)
-		Jx       = vec(getSensMatVec(xloc,sigmaloc,pMis.pFor))   # Jx = J*(dsig/dm)*x
+		xloc     = interpGlobalToLocal(dsigma,x,pMis.gloc.PForInv)
+		Jx       = vec(getSensMatVec(xloc,sigmaloc,pMis.pFor))  # Jx = J*(dsig/dm)*x
 		Jx       = HessMatVec(d2F,Jx) # chain rule for misfit function
 		JTxloc   = getSensTMatVec(Jx,sigmaloc,pMis.pFor)
-		JTx      = dsigma'*interpLocalToGlobal(JTxloc,pMis.gloc.PForInv) # = (dsig/dm)'*J'*d2F*J*(dsig/dm)*x
+		JTx      = interpLocalToGlobal(dsigma,JTxloc,pMis.gloc.PForInv) # = (dsig/dm)'*J'*d2F*J*(dsig/dm)*x
 		return JTx
 	catch err
 		if isa(err,InterruptException)
