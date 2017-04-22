@@ -50,10 +50,10 @@ function getHessian(sig,pMis::Array,d2F::Array,workerList=workers())
 	
 	workerList = intersect(workers(),workerList)
 	if isempty(workerList)
-		error("getSensMat: specified workers do not exist!")
+		error("getHessian: specified workers do not exist!")
 	end
 	
-	sigRef = Array(Future,length(workerList))
+	sigRef = Array(Future,maximum(workerList))
 	
 	@sync begin
 		for p=workerList
