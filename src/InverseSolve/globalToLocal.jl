@@ -31,8 +31,8 @@ Example:
 	sigLocalFast = interpGlobalToLocal(sigGlobal,gloc.PForInv,gloc.sigmaBack)
 """
 type GlobalToLocal <: AbstractModel
-	PForInv::Union{SparseMatrixCSC,AbstractFloat} # interpolation matrix from fwd mesh to inv mesh
-	sigmaBackground::Union{Vector{Float64},AbstractFloat} #  (# of cells fwd mesh)
+	PForInv::Union{SparseMatrixCSC,Vector{SparseMatrixCSC},AbstractFloat} # interpolation matrix from fwd mesh to inv mesh
+	sigmaBackground::Union{Vector{Float64},Vector{Vector{Float64}},AbstractFloat} #  (# of cells fwd mesh)
 end # type GlobalToLocal
 
 # Constructors
@@ -44,6 +44,33 @@ getGlobalToLocal(P,sigBack::Vector{Float64},fname) = GlobalToLocal(P,sigBack)
 
 function prepareGlobalToLocal(Mesh2Mesh,Iact,sigmaBackground,fname)
 	return getGlobalToLocal(Iact'*Mesh2Mesh,interpGlobalToLocal(sigmaBackground,Mesh2Mesh),fname)
+end
+
+function prepareGlobalToLocal(Mesh2Mesh::SparseMatrixCSC,Iact::SparseMatrixCSC,sigmaBackground::Vector{Vector{Float64}},fname)
+        if ~( length(Mesh2Mesh) == length(Iact) == length(sigmaBackground) )
+            error("Tuple inputs to prepareGlobalToLocal must all have same length")
+        end
+        n = length(Mesh2Mesh)
+        PforInv = Iact'*Mesh2Mesh
+        localSigBackground = Vector{Vector{Float64}}()
+        for i = 1:n
+            push!(localSigBackground[i],interpGlobalToLocal(sigmaBackground[i],Mesh2Mesh[i]))
+        end
+        return GlobalToLocal(PforInv,localSigBackground)
+end
+
+function prepareGlobalToLocal(Mesh2Mesh::Vector,Iact::Vector,sigmaBackground::Vector{Vector{Float64}},fname)
+        if ~( length(Mesh2Mesh) == length(Iact) == length(sigmaBackground) )
+            error("Tuple inputs to prepareGlobalToLocal must all have same length")
+        end
+        n = length(Mesh2Mesh)
+        PforInv = Vector{SparseMatrixCSC}()
+        localSigBackground = Vector{Vector{Float64}}()
+        for i = 1:n
+            push!(PforInv,Iact[i]'*Mesh2Mesh[i])
+            push!(localSigBackground[i],interpGlobalToLocal(sigmaBackground[i],Mesh2Mesh[i]))
+        end
+        return GlobalToLocal(PforInv,localSigBackground)
 end
 
 
