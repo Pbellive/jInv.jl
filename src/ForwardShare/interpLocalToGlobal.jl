@@ -1,4 +1,7 @@
-export interpLocalToGlobal, interpGlobalToLocal
+export interpLocalToGlobal, interpGlobalToLocal,MatrixOrScaling
+
+typealias MatrixOrScaling{T} Union{AbstractMatrix{T},UniformScaling{T}}
+
 # Interpolate a vector x from the local mesh to the global mesh
 
 function interpLocalToGlobal(x::Vector{Float64}, P::AbstractFloat,y0::AbstractFloat=0.0)
@@ -10,12 +13,12 @@ function interpGlobalToLocal(x::Vector{Float64}, P::AbstractFloat,y0::AbstractFl
 end
 
 
-function interpLocalToGlobal{T1,T2,N}(D::AbstractMatrix{T1},
+function interpLocalToGlobal{T1,T2,N}(D::MatrixOrScaling{T1},
                                   x::Vector{T1}, P::SparseMatrixCSC{T2,N})
     return D'*interpLocalToGlobal(x,P)
 end
 
-function interpGlobalToLocal{T1,T2,N}(D::AbstractMatrix{T1},
+function interpGlobalToLocal{T1,T2,N}(D::MatrixOrScaling{T1},
                                   x::Vector{T1}, P::SparseMatrixCSC{T2,N})
     return interpGlobalToLocal(D*x,P)
 end

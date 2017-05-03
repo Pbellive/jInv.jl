@@ -35,12 +35,22 @@ println("compare remote versions with local ones")
 
 println("test interpGlobal2Local")
 x   = randn(Minv.nc)
+D1  = speye(Minv.nc)
+D2  = UniformScaling(1.0)
 xf1 = interpGlobalToLocal(x,M2Mc)
 xf2 = interpGlobalToLocal(x,M2Mf)
+xf3 = interpGlobalToLocal(D1,x,M2Mf)
+xf4 = interpGlobalToLocal(D2,x,M2Mf)
 @test norm(xf1-xf2)/norm(xf2) < 1e-12
+@test norm(xf2-xf3)/norm(xf2) < 1e-12
+@test norm(xf2-xf4)/norm(xf2) < 1e-12
 
 println("test interpLocal2Global")
 x = randn(Mfor.nc)
 xf1 = interpLocalToGlobal(x,M2Mc)
 xf2 = interpLocalToGlobal(x,M2Mf)
+xf3 = interpLocalToGlobal(D1,x,M2Mf)
+xf4 = interpLocalToGlobal(D2,x,M2Mf)
 @test norm(xf1-xf2)/norm(xf2) < 1e-12
+@test norm(xf2-xf3)/norm(xf2) < 1e-12
+@test norm(xf2-xf4)/norm(xf2) < 1e-12
