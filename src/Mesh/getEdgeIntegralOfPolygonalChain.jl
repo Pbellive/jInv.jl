@@ -105,7 +105,7 @@ for ip = 1:np
       tz = Float64[]
     end
 
-    t  = sort(unique([0;tx;ty;tz;1]))
+    t  = sort(unique([-0.0;0.0;tx;ty;tz;1.0]))[2:end]
     nq = length(t) - 1
     tc = 0.5 * (t[1:nq] + t[2:nq+1])
 
