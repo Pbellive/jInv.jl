@@ -58,6 +58,15 @@ function prepareGlobalToLocal(Mesh2Mesh::Vector,Iact::Vector,sigmaBackground::Ab
         return GlobalToLocal(PforInv,interpGlobalToLocal(sigmaBackground,Mesh2Mesh))
 end
 
+function prepareGlobalToLocal(Mesh2Mesh,Iact::Vector,sigmaBackground::AbstractModel,fname)
+        n = length(Mesh2Mesh)
+        PforInv = Vector{SparseMatrixCSC}()
+        for i = 1:n
+            push!(PforInv,Iact[i]'*Mesh2Mesh)
+        end
+        return GlobalToLocal(PforInv,interpGlobalToLocal(sigmaBackground,Mesh2Mesh))
+end
+
 
 #############################################################################################################################
 ##### ERAN: I think that with the the update of misfitParam and the associated functions, the code below is no longer needed.

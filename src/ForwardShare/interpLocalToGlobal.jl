@@ -18,6 +18,12 @@ function interpLocalToGlobal{T1,T2,N}(D::MatrixOrScaling{T1},
     return D'*interpLocalToGlobal(x,P)
 end
 
+function interpLocalToGlobal{T1,T2,N}(D::MatrixOrScaling{T1},
+                                      dummy::Vector{T1},x::Vector{T1}, 
+                                      P::SparseMatrixCSC{T2,N})
+    return D'*interpLocalToGlobal(x,P)
+end
+
 function interpGlobalToLocal{T1,T2,N}(D::MatrixOrScaling{T1},
                                   x::Vector{T1}, P::SparseMatrixCSC{T2,N})
     return interpGlobalToLocal(D*x,P)
